@@ -1,17 +1,12 @@
-WITH cte AS (
-    SELECT 
+select
+    round(count(a2.player_id) / count(a1.player_id), 2) as fraction
+from
+(
+    select
         player_id,
-        event_date,
-        LEAD(event_date) OVER (
-            PARTITION BY player_id 
-            ORDER BY event_date
-        ) AS next_event_date,
-        ROW_NUMBER() OVER(PARTITION BY player_id ORDER BY event_date) AS rn
-    FROM Activity
-)
-
-SELECT 
-    Round(count(*)/(SELECT count(*) FROM cte WHERE rn = 1),2) AS fraction
-FROM cte
-WHERE DATE_ADD(event_date,INTERVAL 1 DAY) = next_event_date
-AND rn = 1
+        min(event_date) as first_event_date
+    from Activity
+    group by player_id
+) as a1
+left outer join Activity as a2
+on a1.player_id = a2.player_id and a1.first_event_date = date_sub(a2.event_date, interval 1 day)
