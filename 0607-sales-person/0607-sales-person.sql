@@ -1,13 +1,6 @@
-# Write your MySQL query statement below
-WITH cte AS (
-    SELECT DISTINCT sales_id
-    FROM Orders
-    WHERE com_id IN (SELECT com_id FROM Company WHERE name = 'RED')
-)
-SELECT DISTINCT s.name
-FROM SalesPerson s
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM cte c
-    WHERE c.sales_id = s.sales_id
-);
+SELECT name FROM SalesPerson WHERE name != ALL (
+SELECT s.name 
+FROM SalesPerson s 
+JOIN Orders o ON s.sales_id = o.sales_id 
+JOIN Company c ON o.com_id = c.com_id
+WHERE c.name="RED");
