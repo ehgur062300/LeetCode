@@ -6,4 +6,4 @@ with cte as (
     having count(num) = 1
 )
 
-select IFNULL(max(num),null) as num from cte
+select max(num) as num from cte
