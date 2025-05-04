@@ -1,14 +1,12 @@
 # Write your MySQL query statement below
-with cte as (
-    select * from Seat order by id desc limit 1
-)
 
 select 
-    s1.id,
-    case
-        when c.id % 2 != 0 and s1.id = c.id then (select s2.student from Seat s2 where s2.id = s1.id)
-        when s1.id % 2 = 0 then (select s2.student from Seat s2 where s2.id = s1.id-1)
-        when s1.id % 2 != 0 then (select s2.student from Seat s2 where s2.id = s1.id+1)
-    end as student
-from Seat s1, cte c
-
+    a.id,
+    case when a.id % 2 = 1 and b.id is not null then b.student 
+        when a.id % 2 = 0 then c.student 
+        else a.student end as student
+from Seat a
+left join Seat b
+on a.id=b.id - 1
+left join Seat c
+on a.id=c.id + 1
