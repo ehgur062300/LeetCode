@@ -1,23 +1,16 @@
 class Solution {
     public boolean threeConsecutiveOdds(int[] arr) {
-        int cnt = 0;
-        for (int n : arr) {
-            if (cnt == 3) {
+        boolean[] checker = new boolean[3];
+        for (int i = 0; i<arr.length; i++) {
+            if (arr[i] % 2 == 1) {
+                checker[i%3] = true;
+            } else {
+                checker[i%3] = false;
+            }
+            
+            if (checker[0] && checker[1] && checker[2]) {
                 return true;
             }
-
-            if (n % 2 == 1){
-                cnt++;
-                continue;
-            } 
-            
-            if (n % 2 == 0 && cnt > 0) {
-                cnt = 0;
-            } 
-            
-        }
-        if(cnt == 3) {
-            return true;
         }
         return false;
     }
