@@ -1,55 +1,49 @@
 class ZeroEvenOdd {
     private int n;
-    private int cnt = 1;
-    private boolean isZero = false;
-    private boolean isEven = true;
-    private boolean isOdd = true;
-    
+    private int current = 1;
+    private int state = 0; // 0: zero, 1: odd, 2: even
+
     public ZeroEvenOdd(int n) {
         this.n = n;
     }
 
-    // printNumber.accept(x) outputs "x", where x is an integer.
     public synchronized void zero(IntConsumer printNumber) throws InterruptedException {
-        for (int i=0; i<n; i++) {
-            while(isZero){
+        for (int i = 0; i < n; i++) {
+            while (state != 0) {
                 wait();
             }
             printNumber.accept(0);
-            isZero = true;
-            if (cnt % 2 == 0) {
-                isEven = false;
+            if (current % 2 == 1) {
+                state = 1; // odd
             } else {
-                isOdd = false;
+                state = 2; // even
             }
             notifyAll();
         }
     }
 
     public synchronized void even(IntConsumer printNumber) throws InterruptedException {
-        while(cnt <= n){
-            while(isEven){
+        while (current <= n) {
+            while (state != 2) {
                 wait();
-                if(cnt > n) { return; }
+                if (current > n) return;
             }
-            printNumber.accept(cnt);
-            cnt++;
-            isEven = true;
-            isZero = false;
+            printNumber.accept(current);
+            current++;
+            state = 0;
             notifyAll();
         }
     }
 
     public synchronized void odd(IntConsumer printNumber) throws InterruptedException {
-        while(cnt <= n) {
-            while(isOdd){
+        while (current <= n) {
+            while (state != 1) {
                 wait();
-                if(cnt > n) { return; }
+                if (current > n) return;
             }
-            printNumber.accept(cnt);
-            cnt++;
-            isOdd = true;
-            isZero = false;
+            printNumber.accept(current);
+            current++;
+            state = 0;
             notifyAll();
         }
     }
